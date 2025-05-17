@@ -1,5 +1,5 @@
 local Gui = {
-    funcs_handels = {"update", "keypressed", "mousemoved", "mousepressed", "textinput", "keyreleased", "mousereleased"},
+    funcs_handels = {"keypressed", "mousemoved", "mousepressed", "textinput", "keyreleased", "mousereleased"},
     layers = {},
     style = require("GUI.style"),
 }
@@ -38,6 +38,43 @@ function Gui:newWidjet( layer, widjet_name, data )
     setmetatable( widjet, require("GUI.widjets." .. widjet_name ) )
     if widjet.init then widjet:init() end
     return widjet
+end
+
+local function check_widjet_activated( widjet, layer, dt )
+    if widjet.clicked or widjet.collided then
+        for i=#layer.widjets, 1, -1  do
+            local wdj = layer.widjets[i]
+
+            if wdj ~= widjet then
+                wdj.clicked, wdj.collided = false, false
+            end
+        end
+    end
+
+    if widjet.childs then
+        for _, child in ipairs(widjet.childs) do
+            if child.update then child:update( dt ) end
+        end
+    end
+end
+
+local function layer_update( layer, dt )
+    if layer.visible then return end
+    for ic = #layer.widjets, 1, -1 do
+        local widjet = layer.widjets[ic]
+
+        if widjet.update then 
+            widjet:update( widjet, dt )
+        end
+
+        check_widjet_activated( widjet, layer, dt )
+    end
+end
+
+function Gui:update( dt )
+    for _, layer in ipairs( Gui.layers ) do
+        layer_update( layer, dt )
+    end
 end
 
 function Gui:draw()

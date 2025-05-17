@@ -33,6 +33,7 @@ return {
     end,
 
     label = function ( widjet )
+        love.graphics.setFont( font20 )
         if widjet.title then
             local title_bar_w = font20:getWidth( widjet.title )+16
             if title_bar_w > widjet.w-16 then
@@ -40,7 +41,6 @@ return {
             end
 
             love.graphics.setColor( hex("#d48166") )
-            love.graphics.setFont( font20 )
             love.graphics.rectangle( "fill", widjet.x + 8, widjet.y-26, title_bar_w, 36, 8, 8)
             love.graphics.setColor( hex("#e6e2dd") )
             love.graphics.setScissor( widjet.x + 8, widjet.y-26, title_bar_w, 36 )
@@ -56,15 +56,18 @@ return {
     end,
 
     checkbox = function ( widjet )
+        love.graphics.setFont( font20 )
+        love.graphics.setColor( hex( "#272926" ) )
+        love.graphics.rectangle( "fill", widjet.x, widjet.y, widjet.w, font20:getHeight()*(#widjet.variants+0.8), 8, 8 )
         for index, child in ipairs( widjet.childs ) do
             love.graphics.setColor( hex("#d48166") )
-            if widjet.act_variant == index then
+            if widjet.act_variants[index] then
                 love.graphics.rectangle( "fill", child.x, child.y, child.w, child.h )
             else
                 love.graphics.rectangle( "line", child.x, child.y, child.w, child.h )
             end
             love.graphics.setColor( hex("#e6e2dd") )
-            love.graphics.print( widjet.variants[index], widjet.x+24, widjet.y+(widjet.variant_size+5)*index-6 )
+            love.graphics.print( widjet.variants[index], widjet.x+20+10, widjet.y+(widjet.variant_size+5)*index-font20:getHeight()+2 )
         end
     end
 }

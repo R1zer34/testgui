@@ -2,26 +2,22 @@ local Gui = require "GUI"
 require "GUI.utils"
 
 local l = Gui:newLayer()
-local b1 = Gui:newWidjet( l,  "button", { w=160, h=40, title="Кнопка", icon=love.graphics.newImage("icon.png")})
-local b2 = Gui:newWidjet( l,  "button", {x=170, w=160, h=40, title="Кнопка 2"})
+local b1 = Gui:newWidjet( l,  "button", { w=160, h=40, title="Кнопка", icon=love.graphics.newImage( "icon.png" ) } )
+local b2 = Gui:newWidjet( l,  "button", { x=170, w=160, h=40, title="Кнопка 2" } )
 local lb = Gui:newWidjet( l,  "label", { y=100, w = 300, h=240, title="Текстовое поле",
     text=[[
 линия1
 линия2
 ...
- ===
- (`\,;+++;,/`)
- (- (((^.^))) -)
-(- ))\-/(( -)
-(- (() ()) -)
- \ `/`@`\` /
- \ / \ /
- \/ \/
- / \
- /_/_/_|_\_\_\ ldbx
+...
+...
+и т.д
 ]]
 })
-local cb = Gui:newWidjet( l,  "checkbox", { x=340, variants={"1", "2", "3"}})
+local cb = Gui:newWidjet( l,  "checkbox", { x=340, w=120, variants={"пункт1", "пункт2", "пункт3"}} )
+cb.onSwitched = function ( i, v )
+    print( i, v )
+end
 
 function love.update( dt )
     Gui:update( dt )
