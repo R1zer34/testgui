@@ -5,13 +5,22 @@ local base = {
     visible = true,
     clicked = false,
     collided = false,
-    activated = false,
+    grabed = false,
     title = nil,
 }
 base.__index = base
 
 function base:setX( x )
+    local old_x = self.x
     self.x = x
+
+    if self.childs then
+        for _, child in ipairs( self.childs ) do
+            local child_old_x = child.x
+            child.x = child_old_x + (self.x-old_x)
+        end
+    end
+
     return self
 end
 
@@ -20,7 +29,16 @@ function base:getX()
 end
 
 function base:setY( y )
+    local old_y = self.y
     self.y = y
+
+    if self.childs then
+        for _, child in ipairs( self.childs ) do
+            local child_old_y = child.y
+            child.y = child_old_y + (self.y-old_y)
+        end
+    end
+
     return self
 end
 
@@ -29,7 +47,20 @@ function base:getY()
 end
 
 function base:setPos( x, y )
-    self.x = x self.y = y
+    local old_y = self.y
+    local old_x = self.x
+    self.y = y
+    self.x = x
+
+    if self.childs then
+        for _, child in ipairs( self.childs ) do
+            local child_old_y = child.y
+            local child_old_x = child.x
+            child.y = child_old_y + (self.y-old_y)
+            child.x = child_old_x + (self.x-old_x)
+        end
+    end
+
     return self
 end
 
@@ -94,20 +125,27 @@ function base:getTiele()
     return self.title
 end
 
-function base:mousemoved( _, x, y, dx, dy )
+function base:mousemoved( _, x, y, _, _ )
     self.collided = pointRectCollide( x, y, self:getRect() )
+    if not self.collided then self.clicked = false end
 end
 
 function base:mousepressed( _, _, _, button )
     if button == 1 and self.collided then
         self.clicked = true
+        self.grabed = true
     end
 end
 
 function base:mousereleased( _, _, _, button )
-    if button == 1 and self.clicked then
-        if self.onClicked then self.onClicked() end
-        self.clicked = false
+    if button == 1 then
+        if self.clicked then
+            if self.onClicked then self.onClicked() end
+            self.clicked = false
+        elseif self.grabed and self.collided then
+            if self.onClicked then self.onClicked() end
+        end
+        self.grabed = false
     end
 end
 

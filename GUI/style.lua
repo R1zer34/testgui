@@ -1,7 +1,7 @@
 require "GUI.utils"
 
-local font24 = love.graphics.newFont( "GUI/src/hemico.ttf", 24 )
-local font20 = love.graphics.newFont( "GUI/src/hemico.ttf", 20 )
+local font24 = love.graphics.newFont( "GUI/src/Audexitalic.ttf", 24 )
+local font20 = love.graphics.newFont( "GUI/src/Audex.ttf", 20 )
 
 return {
     base = function ( widjet )
@@ -14,17 +14,25 @@ return {
         love.graphics.setFont( font24 )
 
         love.graphics.setColor( hex("#d48166") )
-        if widjet.collided then
+        if widjet.collided and (not love.mouse.isDown(1) or widjet.grabed) then
             love.graphics.setColor( hex("#9e624d") )
         end
-        if widjet.clicked then
+        if widjet.clicked or (widjet.collided and widjet.grabed) then
             love.graphics.setColor( hex("#7a4c3c") )
         end
         love.graphics.rectangle( "fill", widjet.x, widjet.y, widjet.w, widjet.h, 8, 8 )
         love.graphics.setScissor( widjet.x+5, widjet.y+5, widjet.w-10, widjet.h-10 )
         if widjet.icon then
             local ix, iy = rectInRect( widjet.x, widjet.y, widjet.w, widjet.h, widjet.h-20, widjet.h-20)
-            love.graphics.draw( widjet.icon, ix, iy, 0, widjet.icon:getWidth()/( widjet.w+20 ) )
+            local icon_scale
+
+            if widjet.icon:getHeight() > widjet.w then 
+                icon_scale = ( widjet.h-25 )/widjet.icon:getHeight()
+            else
+                icon_scale = widjet.icon:getHeight()/( widjet.h )
+            end
+
+            love.graphics.draw( widjet.icon, ix, iy, 0, icon_scale )
         elseif widjet.title then
             love.graphics.setColor( hex("#e6e2dd") )
             love.graphics.print( widjet.title, rectInRect( widjet.x, widjet.y, widjet.w, widjet.h, font24:getWidth( widjet.title ), font24:getHeight() ) )
@@ -40,25 +48,25 @@ return {
                 title_bar_w = widjet.w-16
             end
 
+            love.graphics.setColor( hex( "#272926" ) )
+            love.graphics.rectangle( "fill", widjet.x + (widjet.w-title_bar_w)/2, widjet.y-26, title_bar_w, 36, 8, 8)
             love.graphics.setColor( hex("#d48166") )
-            love.graphics.rectangle( "fill", widjet.x + 8, widjet.y-26, title_bar_w, 36, 8, 8)
-            love.graphics.setColor( hex("#e6e2dd") )
-            love.graphics.setScissor( widjet.x + 8, widjet.y-26, title_bar_w, 36 )
-            love.graphics.print( widjet.title, rectInRect( widjet.x+8, widjet.y-26, title_bar_w, 36, font20:getWidth( widjet.title ), font20:getHeight() ) )
+            love.graphics.setScissor( widjet.x + (widjet.w-title_bar_w)/2, widjet.y-26, title_bar_w, 36 )
+            love.graphics.print( widjet.title, rectInRect( widjet.x + (widjet.w-title_bar_w)/2, widjet.y-26, title_bar_w, 36, font20:getWidth( widjet.title ), font20:getHeight() ) )
             love.graphics.setScissor()
         end
-        love.graphics.setColor( hex("#d48166") )
+        love.graphics.setColor( hex( "#272926" ) )
         love.graphics.rectangle( "fill", widjet.x, widjet.y, widjet.w, widjet.h, 8, 8)
         love.graphics.setColor( hex("#e6e2dd") )
         love.graphics.setScissor( widjet.x+5, widjet.y, widjet.w-10, widjet.h-5 )
-        love.graphics.printf( widjet.text, widjet.x+5, widjet.y, widjet.w-10)
+        love.graphics.printf( widjet.text, widjet.x+5, widjet.y+8, widjet.w-10)
         love.graphics.setScissor()
     end,
 
     checkbox = function ( widjet )
         love.graphics.setFont( font20 )
         love.graphics.setColor( hex( "#272926" ) )
-        love.graphics.rectangle( "fill", widjet.x, widjet.y, widjet.w, font20:getHeight()*(#widjet.variants+0.8), 8, 8 )
+        love.graphics.rectangle( "fill", widjet.x, widjet.y, widjet.w, widjet.box_size*(#widjet.variants+0.8)+8, 8, 8 )
         for index, child in ipairs( widjet.childs ) do
             love.graphics.setColor( hex("#d48166") )
             if widjet.act_variants[index] then
@@ -67,7 +75,7 @@ return {
                 love.graphics.rectangle( "line", child.x, child.y, child.w, child.h )
             end
             love.graphics.setColor( hex("#e6e2dd") )
-            love.graphics.print( widjet.variants[index], widjet.x+20+10, widjet.y+(widjet.variant_size+5)*index-font20:getHeight()+2 )
+            love.graphics.print( widjet.variants[index], widjet.x+widjet.box_size*1.5, widjet.y+(widjet.box_size+5)*index-font20:getHeight()+2 )
         end
     end
 }

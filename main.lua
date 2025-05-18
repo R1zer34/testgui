@@ -1,23 +1,42 @@
+love.graphics.setDefaultFilter("nearest", "nearest")
 local Gui = require "GUI"
 require "GUI.utils"
 
 local l = Gui:newLayer()
-local b1 = Gui:newWidjet( l,  "button", { w=160, h=40, title="Кнопка", icon=love.graphics.newImage( "icon.png" ) } )
+local b1 = Gui:newWidjet( l,  "button", { w=160, h=160, icon=love.graphics.newImage( "icon.png" ) } )
 local b2 = Gui:newWidjet( l,  "button", { x=170, w=160, h=40, title="Кнопка 2" } )
-local lb = Gui:newWidjet( l,  "label", { y=100, w = 300, h=240, title="Текстовое поле",
+local b3 = Gui:newWidjet( l,  "button", { x=170, y=50, w=160, h=40, title="Кнопка 3" } )
+local b4 = Gui:newWidjet( l,  "button", { x=170, y=95, w=160, h=40, title="Кнопка 4" } )
+local lb = Gui:newWidjet( l,  "label", {y=200, w = 300, h=240, title="Текстовое поле",
     text=[[
-линия1
-линия2
-...
-...
-...
-и т.д
+Съешь еще этих мягких французких булочек, да выпей чаю!
 ]]
 })
-local cb = Gui:newWidjet( l,  "checkbox", { x=340, w=120, variants={"пункт1", "пункт2", "пункт3"}} )
-cb.onSwitched = function ( i, v )
-    print( i, v )
+local cb = Gui:newWidjet( l,  "checkbox", { x=340, w=120, variants={"+1 px", "+1 px", "+2 px"}} )
+cb.onSwitched = function ( i, v, d )
+    if d then
+        if i == 1 then
+            cb:setBoxSize(cb:getBoxSize()+1)
+        elseif i==2 then
+            cb:setBoxSize(cb:getBoxSize()+1)
+        else
+            cb:setBoxSize(cb:getBoxSize()+2)
+        end
+    else
+        if i == 1 then
+            cb:setBoxSize(cb:getBoxSize()-1)
+        elseif i==2 then
+            cb:setBoxSize(cb:getBoxSize()-1)
+        else
+            cb:setBoxSize(cb:getBoxSize()-2)
+        end
+    end
 end
+
+b1.onClicked = function ()
+    print(1)
+end
+
 
 function love.update( dt )
     Gui:update( dt )

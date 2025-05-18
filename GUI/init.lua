@@ -14,10 +14,10 @@ function Gui:newLayer()
         layer[func] = function ( ... )
             if layer.visible then
                 for _, widjet in ipairs( layer.widjets ) do
-                    if widjet.visible and widjet[func] then 
-                        widjet[func]( widjet, ... ) 
+                    if widjet.visible and widjet[func] then
+                        widjet[func]( widjet, ... )
                         if widjet.childs then
-                            for index, child in ipairs(widjet.childs) do
+                            for _, child in ipairs( widjet.childs ) do
                                 if child[func] then child[func]( child, ...) end
                             end
                         end
@@ -40,34 +40,34 @@ function Gui:newWidjet( layer, widjet_name, data )
     return widjet
 end
 
-local function check_widjet_activated( widjet, layer, dt )
-    if widjet.clicked or widjet.collided then
+local function check_widjet_activated( widjet, layer, _ )
+    if widjet.collided then
         for i=#layer.widjets, 1, -1  do
-            local wdj = layer.widjets[i]
+            local other_widjet = layer.widjets[i]
 
-            if wdj ~= widjet then
-                wdj.clicked, wdj.collided = false, false
+            if other_widjet ~= widjet then
+                other_widjet.collided = false
             end
-        end
-    end
-
-    if widjet.childs then
-        for _, child in ipairs(widjet.childs) do
-            if child.update then child:update( dt ) end
+            
         end
     end
 end
 
 local function layer_update( layer, dt )
-    if layer.visible then return end
+    if not layer.visible then return end
     for ic = #layer.widjets, 1, -1 do
         local widjet = layer.widjets[ic]
+        check_widjet_activated( widjet, layer, dt )
 
-        if widjet.update then 
+        if widjet.update then
             widjet:update( widjet, dt )
         end
 
-        check_widjet_activated( widjet, layer, dt )
+        if widjet.childs then
+            for _, child in ipairs(widjet.childs) do
+                if child.update then child:update( dt ) end
+            end
+        end
     end
 end
 
