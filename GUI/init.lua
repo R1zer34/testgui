@@ -2,7 +2,30 @@ local Gui = {
     funcs_handels = {"keypressed", "mousemoved", "mousepressed", "textinput", "keyreleased", "mousereleased"},
     layers = {},
     style = require("GUI.style"),
+
+    default_colorscheme = {
+        back_color = hex("#d48166"),
+        collided_color = hex("#9e624d"),
+        clicked_color = hex("#7a4c3c"),
+        text_color = hex("#e6e2dd"),
+        back2_color = hex( "#272926" ),
+    },
 }
+
+Gui.colorscheme = Gui.default_colorscheme
+
+function Gui:setColorscheme( colors )
+    local new_sheme = {}
+    for base_name, base_color in pairs( self.colorscheme ) do
+        new_sheme[base_name] = base_color
+        for name, color in pairs( colors ) do
+            if base_name == name then
+                new_sheme[base_name] = color
+            end
+        end
+    end
+    Gui.colorscheme = new_sheme
+end
 
 function Gui:newLayer()
     local layer = {
@@ -77,16 +100,22 @@ function Gui:update( dt )
     end
 end
 
+local function draw_widjets( layer )
+    for _, widjet in ipairs( layer.widjets ) do
+        if widjet.visible then
+            if Gui.style[widjet.name] then
+                 Gui.style[widjet.name]( widjet, Gui.colorscheme )
+            else
+                Gui.style["base"]( widjet, Gui.colorscheme )
+            end
+        end
+    end
+end
+
 function Gui:draw()
     for _, layer in ipairs( Gui.layers ) do
         if layer.visible then
-            for _, widjet in ipairs( layer.widjets ) do
-                if Gui.style[widjet.name] then
-                    Gui.style[widjet.name](widjet)
-                else
-                    Gui.style["base"](widjet)
-                end
-            end
+            draw_widjets( layer )
         end
     end
 end

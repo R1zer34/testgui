@@ -16,10 +16,10 @@ function checkbox:init()
         b.onClicked = function ()
             if self.act_variants[index] then
                 self.act_variants[index] = false
-                if self.onSwitched then self.onSwitched( index, self.variants[index], false ) end
+                if self.onSwitched then self.onSwitched( index, variant, false ) end
             else
                 self.act_variants[index] = true
-                if self.onSwitched then self.onSwitched( index, self.variants[index], true ) end
+                if self.onSwitched then self.onSwitched( index, variant, true ) end
             end
         end
 
