@@ -1,2 +1,3 @@
 Бибилиотека пользовательского графического интерфейса для love2d 
-![image](https://github.com/user-attachments/assets/a1ffa6be-1d7b-4735-bae8-40f71f0e37e3)
+![Видео-19-05-2025 185923](https://github.com/user-attachments/assets/3035cd5d-2962-4be8-beb7-c6d33176faae)
+
