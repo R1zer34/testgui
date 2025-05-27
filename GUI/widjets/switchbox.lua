@@ -1,11 +1,11 @@
-local switchbox = {
+local utils = require "GUI.utils"
+
+local switchbox = utils.createWidjet( {
     circ_size = 20,
     act_variant = 1,
     variants = {},
     childs = {},
-}
-setmetatable( switchbox, require( "GUI.widjets.base" ) )
-switchbox.__index = switchbox
+} )
 
 function switchbox:init()
     for index, variant in ipairs( self.variants ) do

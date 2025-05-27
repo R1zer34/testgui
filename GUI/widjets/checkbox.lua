@@ -1,11 +1,11 @@
-local checkbox = {
+local utils = require "GUI.utils"
+
+local checkbox = utils.createWidjet( {
     variants = {},
     box_size = 20,
     childs = {},
     act_variants = {},
-}
-setmetatable( checkbox, require( "GUI.widjets.base" ) )
-checkbox.__index = checkbox
+} )
 
 function checkbox:init()
     for index, variant in ipairs( self.variants ) do

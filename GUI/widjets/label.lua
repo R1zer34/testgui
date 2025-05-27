@@ -1,8 +1,8 @@
-local label = {
+local utils = require "GUI.utils"
+
+local label = utils.createWidjet( {
     text = "",
-}
-setmetatable( label, require("GUI.widjets.base") )
-label.__index = label
+} )
 
 function label:settext( text )
     self.text = text

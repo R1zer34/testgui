@@ -1,14 +1,16 @@
+local utils = require "GUI.utils"
+
 local Gui = {
-    funcs_handels = {"keypressed", "mousemoved", "mousepressed", "textinput", "keyreleased", "mousereleased"},
+    funcs_handels = {"keypressed", "mousemoved", "mousepressed", "textinput", "keyreleased", "mousereleased", "textedited"},
     layers = {},
     style = require("GUI.style"),
 
     default_colorscheme = {
-        back_color = hex("#d48166"),
-        collided_color = hex("#9e624d"),
-        clicked_color = hex("#7a4c3c"),
-        text_color = hex("#e6e2dd"),
-        back2_color = hex( "#272926" ),
+        back_color = utils.hex("#d48166"),
+        collided_color = utils.hex("#9e624d"),
+        clicked_color = utils.hex("#7a4c3c"),
+        text_color = utils.hex("#e6e2dd"),
+        back2_color = utils.hex( "#272926" ),
     },
 }
 
@@ -27,6 +29,14 @@ function Gui:setColorscheme( colors )
     Gui.colorscheme = new_sheme
 end
 
+local function addHandlesToWidjets( layer, func, ... )
+    for _, widjet in ipairs( layer.widjets ) do
+        if widjet.visible and widjet[func] then
+            widjet[func]( widjet, ... )
+        end
+    end
+end
+
 function Gui:newLayer()
     local layer = {
         widjets = {},
@@ -36,16 +46,7 @@ function Gui:newLayer()
     for _, func in ipairs( Gui.funcs_handels ) do
         layer[func] = function ( ... )
             if layer.visible then
-                for _, widjet in ipairs( layer.widjets ) do
-                    if widjet.visible and widjet[func] then
-                        widjet[func]( widjet, ... )
-                        if widjet.childs then
-                            for _, child in ipairs( widjet.childs ) do
-                                if child[func] then child[func]( child, ...) end
-                            end
-                        end
-                    end
-                end
+                addHandlesToWidjets( layer, func, ... )
             end
         end
     end
@@ -71,7 +72,6 @@ local function check_widjet_activated( widjet, layer, _ )
             if other_widjet ~= widjet then
                 other_widjet.collided = false
             end
-            
         end
     end
 end
@@ -84,12 +84,6 @@ local function layer_update( layer, dt )
 
         if widjet.update then
             widjet:update( widjet, dt )
-        end
-
-        if widjet.childs then
-            for _, child in ipairs(widjet.childs) do
-                if child.update then child:update( dt ) end
-            end
         end
     end
 end

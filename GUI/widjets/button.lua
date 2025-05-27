@@ -1,8 +1,8 @@
-local button = {
+local utils = require "GUI.utils"
+
+local button = utils.createWidjet( {
     icon = nil,
-}
-setmetatable(button, require( "GUI.widjets.base" ) )
-button.__index = button
+} )
 
 function button:setIcon( icon )
     self.icon = icon

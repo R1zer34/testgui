@@ -1,7 +1,8 @@
-require "GUI.utils"
+local utils = require "GUI.utils"
 
-local font24 = love.graphics.newFont( "GUI/src/Audexitalic.ttf", 24 )
+--local font24 = love.graphics.newFont( "GUI/src/Audexitalic.ttf", 24 )
 local font20 = love.graphics.newFont( "GUI/src/Audex.ttf", 20 )
+local font24 = love.graphics.newFont( "GUI/src/Audex.ttf", 24 )
 
 return {
 
@@ -31,14 +32,14 @@ return {
             local icon_scale
 
             if widjet.w > widjet.h then
-                ix, iy = rectInRect( widjet.x, widjet.y, widjet.w, widjet.h, widjet.h-10, widjet.h-10)
+                ix, iy = utils.rectInRect( widjet.x, widjet.y, widjet.w, widjet.h, widjet.h-10, widjet.h-10)
                 if widjet.icon:getHeight() > widjet.h then
                     icon_scale = ( widjet.h-16 )/widjet.icon:getHeight()
                 else
                     icon_scale = widjet.icon:getHeight()/( widjet.h )
                 end
             else
-                ix, iy = rectInRect( widjet.x, widjet.y, widjet.w, widjet.h, widjet.w-10, widjet.w-10)
+                ix, iy = utils.rectInRect( widjet.x, widjet.y, widjet.w, widjet.h, widjet.w-10, widjet.w-10)
                 if widjet.icon:getWidth() > widjet.w then
                     icon_scale = ( widjet.w-25 )/widjet.icon:getWidth()
                 else
@@ -49,7 +50,7 @@ return {
             love.graphics.draw( widjet.icon, ix, iy, 0, icon_scale )
         elseif widjet.title then
             love.graphics.setColor( colorscheme.text_color )
-            love.graphics.print( widjet.title, rectInRect( widjet.x, widjet.y, widjet.w, widjet.h, font24:getWidth( widjet.title ), font24:getHeight() ) )
+            love.graphics.print( widjet.title, utils.rectInRect( widjet.x, widjet.y, widjet.w, widjet.h, font24:getWidth( widjet.title ), font24:getHeight() ) )
         end
         love.graphics.setScissor()
     end,
@@ -66,7 +67,7 @@ return {
             love.graphics.rectangle( "fill", widjet.x + (widjet.w-title_bar_w)/2, widjet.y-26, title_bar_w, 36, 8, 8)
             love.graphics.setColor( colorscheme.back_color )
             love.graphics.setScissor( widjet.x + (widjet.w-title_bar_w)/2, widjet.y-26, title_bar_w, 36 )
-            love.graphics.print( widjet.title, rectInRect( widjet.x + (widjet.w-title_bar_w)/2, widjet.y-26, title_bar_w, 36, font20:getWidth( widjet.title ), font20:getHeight() ) )
+            love.graphics.print( widjet.title, utils.rectInRect( widjet.x + (widjet.w-title_bar_w)/2, widjet.y-26, title_bar_w, 36, font20:getWidth( widjet.title ), font20:getHeight() ) )
             love.graphics.setScissor()
         end
         love.graphics.setColor( colorscheme.back2_color )
@@ -137,5 +138,53 @@ return {
             love.graphics.setColor( colorscheme.back_color )
             love.graphics.circle( "line", pos2_x, pos2_y, size )
         end
+    end,
+
+    scrollbar = function ( widjet, colorscheme )
+        local child = widjet.childs[1]
+
+        love.graphics.setColor( colorscheme.back2_color )
+        love.graphics.rectangle( "fill", widjet.x, widjet.y, widjet.w, widjet.h, 8, 8 )
+
+        love.graphics.setColor( colorscheme.back_color )
+        love.graphics.rectangle( "fill", widjet.x+4, widjet.y+4, child.x-widjet.x, child.w-8, 4, 4)
+        
+        love.graphics.setLineWidth( 8 )
+        love.graphics.setColor( colorscheme.back2_color )
+        love.graphics.rectangle( "line", child.x, child.y, child.w-8, child.h-8, 4, 4 )
+
+        love.graphics.setColor( colorscheme.text_color )
+        love.graphics.rectangle( "fill", child.x, child.y, child.w-8, child.h-8, 4, 4 )
+
+        love.graphics.setLineWidth( 1 )
+    end,
+
+    inputline = function ( widjet, colorscheme )
+        love.graphics.setFont( font20 )
+        local text_size = font20:getWidth( widjet.edited_text )
+        local aded_pos = text_size-widjet.w-8
+
+        love.graphics.setColor( colorscheme.back2_color )
+        love.graphics.rectangle( "fill", widjet.x, widjet.y, widjet.w, widjet.h, 8, 8 )
+        love.graphics.setScissor( widjet.x+4, widjet.y+4, widjet.w-4, widjet.h-4)
+        if text_size > widjet.w-8 then
+            if widjet.activated then
+                love.graphics.setColor( colorscheme.text_color )
+                love.graphics.print( {colorscheme.text_color, widjet.edited_text, colorscheme.back_color, "|"}, widjet.x-aded_pos-16, widjet.y+4 )
+            else
+                love.graphics.setColor( colorscheme.text_color )
+                love.graphics.print( widjet.edited_text, widjet.x+4-aded_pos-16, widjet.y+4 )
+            end
+        else
+            if widjet.activated then
+                love.graphics.setColor( colorscheme.text_color )
+                love.graphics.print( {colorscheme.text_color, widjet.edited_text, colorscheme.back_color, "|"}, widjet.x+4, widjet.y+4 )
+            else
+                love.graphics.setColor( colorscheme.text_color )
+                love.graphics.print( widjet.edited_text, widjet.x+4, widjet.y+4 )
+            end
+        end
+        love.graphics.setScissor()
     end
+    
 }

@@ -1,12 +1,10 @@
-require "GUI.utils"
+local utils = require "GUI.utils"
 
-local switcher = {
+local switcher = utils.createWidjet( {
     state = false,
     setW = nil, setH = nil, setSize = nil,
     dir = true
-}
-switcher.__index = switcher
-setmetatable(switcher, require( "GUI.widjets.button" ) )
+} )
 
 function switcher:init()
     if self.dir then

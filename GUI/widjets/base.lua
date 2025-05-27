@@ -1,4 +1,4 @@
-require "GUI.utils"
+local  utils = require "GUI.utils"
 
 local base = {
     x=5,y=5,w=25,h=25,
@@ -6,6 +6,7 @@ local base = {
     clicked = false,
     collided = false,
     grabed = false,
+    activated = false,
     title = nil,
 }
 base.__index = base
@@ -47,19 +48,8 @@ function base:getY()
 end
 
 function base:setPos( x, y )
-    local old_y = self.y
-    local old_x = self.x
-    self.y = y
-    self.x = x
-
-    if self.childs then
-        for _, child in ipairs( self.childs ) do
-            local child_old_y = child.y
-            local child_old_x = child.x
-            child.y = child_old_y + (self.y-old_y)
-            child.x = child_old_x + (self.x-old_x)
-        end
-    end
+    self:setX( x )
+    self:setY( y )
 
     return self
 end
@@ -126,7 +116,7 @@ function base:getTiele()
 end
 
 function base:mousemoved( _, x, y, _, _ )
-    self.collided = pointRectCollide( x, y, self:getRect() )
+    self.collided = utils.pointRectCollide( x, y, self:getRect() )
     if not self.collided then self.clicked = false end
 end
 
@@ -134,6 +124,11 @@ function base:mousepressed( _, _, _, button )
     if button == 1 and self.collided then
         self.clicked = true
         self.grabed = true
+        self.activated = true
+        if self.onActivated then self.onActivated() end
+    else
+        self.activated = false
+        if self.onDisActivated then self.onDisActivated() end
     end
 end
 
@@ -152,6 +147,9 @@ end
 function base:update( dt )
     if self.collided and self.onCollided then
         self.onCollided()
+    end
+    if self.grabed and self.onGrabed then
+        self.onGrabed( love.mouse.getX(), love.mouse.getY() ) 
     end
 end
 
